@@ -11,10 +11,10 @@ setup(
     author_email="primesense.com, severin.lemaignan@brl.ac.uk, graoui.abderrahmane2002@gmail.com",
     license="MIT",
     url="https://github.com/MerGr/openni-python3",
-    packages=["openni-python3"],
+    packages=["openni"],
     platforms=["POSIX", "Windows"],
     python_requires=">=3.8",
-    provides=["openni-python3"],
+    provides=["openni"],
     keywords="PrimeSense, OpenNI, OpenNI2, Natural Interaction, NiTE, NiTE2",
     long_description="""\
 Python-bindings for `OpenNI2 <https://github.com/OpenNI/OpenNI2>`_
