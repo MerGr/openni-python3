@@ -1,6 +1,6 @@
 # OpenNI2 Python 3 Bindings 
 
-This package contains the OpenNI Python bindings updated for modern Python 3.8+.
+This package contains the OpenNI Python bindings written by Séverin Lemaignan updated for modern Python 3.8+.
 
 ## Quick Start
 
