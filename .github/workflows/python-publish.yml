@@ -20,6 +20,7 @@ jobs:
 
       - name: Build release distributions
         run: |
+          rm -rf dist/ build/ *.egg-info
           python -m pip install build
           python -m build
 
