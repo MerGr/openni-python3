@@ -28,5 +28,8 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
+[tool.setuptools.packages.find]
+include = ["openni*"]
+
 [project.urls]
 Homepage = "https://github.com/MerGr/openni-python3"
