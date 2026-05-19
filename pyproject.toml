@@ -29,4 +29,4 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/severin-lemaignan/openni-python"
+Homepage = "https://github.com/MerGr/openni-python3"
