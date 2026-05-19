@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "openni-python3"
 version = "2.4.0"
-description = "OpenNI2 and NiTE2 Python bindings"
+description = "OpenNI2 and NiTE2 Python 3.8+ bindings"
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"

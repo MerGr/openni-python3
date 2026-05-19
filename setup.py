@@ -14,7 +14,6 @@ setup(
     packages=["openni"],
     platforms=["POSIX", "Windows"],
     python_requires=">=3.8",
-    provides=["openni"],
     keywords="PrimeSense, OpenNI, OpenNI2, Natural Interaction, NiTE, NiTE2",
     long_description="""\
 Python-bindings for `OpenNI2 <https://github.com/OpenNI/OpenNI2>`_
