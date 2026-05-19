@@ -4,13 +4,13 @@
 from setuptools import setup
 
 setup(
-    name="openni",
+    name="openni-python3",
     version="2.4.0",
     description="OpenNI2 and NiTE2 Python bindings",
-    author="PrimeSense Inc, Séverin Lemaignan, Jerome Flesch, Hajime Murao",
-    author_email="primesense.com, severin.lemaignan@brl.ac.uk",
+    author="PrimeSense Inc, Séverin Lemaignan, Jerome Flesch, Hajime Murao, Graoui Abderrahmane",
+    author_email="primesense.com, severin.lemaignan@brl.ac.uk, graoui.abderrahmane2002@gmail.com",
     license="MIT",
-    url="https://github.com/severin-lemaignan/openni-python",
+    url="https://github.com/MerGr/openni-python3",
     packages=["openni"],
     platforms=["POSIX", "Windows"],
     python_requires=">=3.8",
