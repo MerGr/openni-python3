@@ -1,24 +1,22 @@
 #!/usr/bin/env python
-#-*- coding: UTF-8 -*-
-import os
+"""OpenNI2 and NiTE2 Python bindings setup configuration."""
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
-setup(name = "openni",
-    version = "2.3.0",
-    description = "OpenNI2 and NiTE2 python bindings",
-    author = "PrimeSense Inc, Séverin Lemaignan, Jerome Flesch, Hajime Murao",
-    author_email = "primesense.com, severin.lemaignan@brl.ac.uk",
-    license = "MIT",
-    url = "https://github.com/severin-lemaignan/openni-python",
-    packages = ["openni"],
-    platforms = ["POSIX", "Windows"],
-    provides = ["openni"],
-    keywords = "PrimeSense, OpenNI, OpenNI2, Natural Interaction, NiTE, NiTE2",
-    long_description = """\
+setup(
+    name="openni",
+    version="2.4.0",
+    description="OpenNI2 and NiTE2 Python bindings",
+    author="PrimeSense Inc, Séverin Lemaignan, Jerome Flesch, Hajime Murao",
+    author_email="primesense.com, severin.lemaignan@brl.ac.uk",
+    license="MIT",
+    url="https://github.com/severin-lemaignan/openni-python",
+    packages=["openni"],
+    platforms=["POSIX", "Windows"],
+    python_requires=">=3.8",
+    provides=["openni"],
+    keywords="PrimeSense, OpenNI, OpenNI2, Natural Interaction, NiTE, NiTE2",
+    long_description="""\
 Python-bindings for `OpenNI2 <https://github.com/OpenNI/OpenNI2>`_
 and `NiTE2 <http://openni.ru/files/nite/>`_.
 
@@ -31,7 +29,7 @@ Example::
     openni2.initialize()     # can also accept the path of the OpenNI redistribution
     
     dev = openni2.Device.open_any()
-    print dev.get_device_info()
+    print(dev.get_device_info())
     
     depth_stream = dev.create_depth_stream()
     depth_stream.start()
@@ -45,17 +43,20 @@ Example::
 .. note:: Refer to the OpenNI2/NiTE2 C API for complete documentation
 
 """,
-    classifiers = [
+    classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
         "Operating System :: MacOS",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
-        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
     ],
 )
 

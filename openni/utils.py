@@ -1,23 +1,28 @@
+"""Utility functions and classes for OpenNI Python bindings."""
 import ctypes
 
 
 class InitializationError(Exception):
+    """Exception raised when OpenNI initialization fails."""
     pass
 
 
 class OpenNIError(Exception):
+    """Exception raised by OpenNI operations."""
     def __init__(self, code, message, logfile):
         self.code = code
         self.logfile = logfile
-        Exception.__init__(self, code, message, logfile)
+        super().__init__(code, message, logfile)
 
 
 class NiteError(Exception):
+    """Exception raised by NiTE operations."""
     def __init__(self, code):
-        Exception.__init__(self, code)
+        super().__init__(code)
 
 
 def inherit_properties(struct, attrname):
+    """Decorator to inherit properties from a ctypes structure."""
     def deco(cls):
         for name, _ in struct._fields_:
             def getter(self, name=name):
@@ -31,22 +36,24 @@ def inherit_properties(struct, attrname):
 
 
 class ClosedHandleError(Exception):
+    """Exception raised when accessing a closed handle."""
     pass
 
 
-class ClosedHandle(object):
+class ClosedHandle:
+    """Sentinel object representing a closed handle."""
     def __getattr__(self, name):
         raise ClosedHandleError("Invalid handle")
 
     def __bool__(self):
         return False
-    __nonzero__ = __bool__
 
 
 ClosedHandle = ClosedHandle()
 
 
-class HandleObject(object):
+class HandleObject:
+    """Base class for objects that wrap C API handles."""
     __slots__ = ["_handle"]
 
     def __init__(self, handle):
@@ -63,48 +70,56 @@ class HandleObject(object):
 
     def __bool__(self):
         return hasattr(self, "_handle") and bool(self._handle)
-    __nonzero__ = __bool__
 
     def close(self):
+        """Close the handle and clean up resources."""
         if hasattr(self, "_handle") and self._handle:
             self._close()
             self._handle = ClosedHandle
 
     def _close(self):
+        """Internal method to close the handle. Must be implemented by subclasses."""
         raise NotImplementedError()
 
 
 def _py_to_ctype_obj(obj):
+    """Convert Python objects to ctypes objects."""
     size = None
     if isinstance(obj, (int, bool)):
         obj = ctypes.c_int(obj)
     elif isinstance(obj, float):
         obj = ctypes.c_float(obj)
     elif isinstance(obj, str):
-        obj = ctypes.create_string_buffer(obj)
+        obj = ctypes.create_string_buffer(obj.encode('utf-8'))
         size = len(obj)
     return obj, size
 
 
 class CEnumMeta(type(ctypes.c_int)):
-    def __new__(cls, name, bases, namespace):
-        cls2 = type(ctypes.c_int).__new__(cls, name, bases, namespace)
+    """Metaclass for C enumerations."""
+    _names_ = {}
+    _values_ = {}
+    
+    def __new__(mcs, name, bases, namespace):
+        cls2 = type(ctypes.c_int).__new__(mcs, name, bases, namespace)
         if namespace.get("__module__") != __name__:
             namespace["_values_"].clear()
-            for name in namespace["_names_"].keys():
-                if name.startswith("_"):
+            for attr_name in namespace["_names_"].keys():
+                if attr_name.startswith("_"):
                     continue
-                setattr(cls2, name, cls2(namespace[name]))
-                namespace["_names_"][name] = namespace[name]
-                namespace["_values_"][namespace[name]] = name
+                # Create enum value using ctypes.c_int approach
+                value = namespace[attr_name]
+                # Create an instance without calling __call__
+                enum_instance = ctypes.c_int(value)
+                # Set the value directly on the class
+                setattr(cls2, attr_name, value)
+                namespace["_names_"][attr_name] = namespace[attr_name]
+                namespace["_values_"][namespace[attr_name]] = attr_name
         return cls2
 
 
-def with_meta(meta, base=object):
-    return meta("NewBase", (base,), {"__module__": __name__})
-
-
-class CEnum(with_meta(CEnumMeta, ctypes.c_int)):
+class CEnum(ctypes.c_int, metaclass=CEnumMeta):
+    """Base class for C enumerations with name/value mapping."""
     _names_ = {}
     _values_ = {}
     __slots__ = []
@@ -112,21 +127,24 @@ class CEnum(with_meta(CEnumMeta, ctypes.c_int)):
     def __repr__(self):
         name = self._values_.get(self.value)
         if name is None:
-            return "%s(%r)" % (self.__class__.__name__, self.val)
+            return f"{self.__class__.__name__}({self.value!r})"
         else:
-            return "%s.%s" % (self.__class__.__name__, name)
+            return f"{self.__class__.__name__}.{name}"
 
     @classmethod
     def from_param(cls, obj):
+        """Convert parameter for ctypes function calls."""
         return int(obj)
 
     @classmethod
     def from_name(cls, name):
+        """Get enum value from name."""
         return cls._names_[name]
 
     @classmethod
     def from_value(cls, val):
-        return getattr(self, cls._values_[val])
+        """Get enum value from numeric value."""
+        return getattr(cls, cls._values_[val])
 
     def __int__(self):
         return int(self.value)
@@ -157,15 +175,16 @@ class CEnum(with_meta(CEnumMeta, ctypes.c_int)):
 
 
 class DLLNotLoaded(Exception):
+    """Exception raised when DLL operations are attempted before loading."""
     pass
 
 
-class UnloadedDLL(object):
+class UnloadedDLL:
+    """Placeholder for an unloaded DLL."""
     __slots__ = []
 
     def __bool__(self):
         return False
-    __nonzero__ = __bool__
 
     def __call__(self, *args, **kwargs):
         raise DLLNotLoaded("DLL is not loaded")

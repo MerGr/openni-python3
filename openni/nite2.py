@@ -1,4 +1,5 @@
 # pylint: disable=W0212,W0603
+"""NiTE2 Python bindings for skeleton tracking and hand detection."""
 
 import sys
 import os
@@ -8,7 +9,12 @@ import ctypes
 import platform
 from openni import _nite2 as c_api
 from openni import openni2
-from openni.utils import inherit_properties, ClosedHandle, HandleObject, InitializationError
+from openni.utils import (
+    inherit_properties,
+    ClosedHandle,
+    HandleObject,
+    InitializationError,
+)
 
 from openni._nite2 import NiteJointType as JointType
 from openni._nite2 import NiteSkeletonState as SkeletonState
@@ -72,7 +78,7 @@ def initialize(dll_directories=_default_dll_directories):
             exceptions.append((fullpath, "file does not exist"))
             continue
         try:
-            os.chdir(dlldir)
+            os.add_dll_directory(dlldir)
             c_api.load_dll(fullpath)
             c_api.niteInitialize()
         except Exception as ex:
@@ -84,8 +90,12 @@ def initialize(dll_directories=_default_dll_directories):
 
     os.chdir(prev)
     if not found:
-        raise InitializationError("NiTE2 could not be loaded:\n    %s" %
-                                  ("\n    ".join("%s: %s" % (dir, ex) for dir, ex in exceptions)),)
+        error_details = "\n    ".join(
+            f"{dir}: {ex}" for dir, ex in exceptions
+        )
+        raise InitializationError(
+            f"NiTE2 could not be loaded:\n    {error_details}"
+        )
 
     _nite2_initialized = True
 
@@ -134,7 +144,8 @@ SkeletonJoint = c_api.NiteSkeletonJoint
 
 
 @inherit_properties(c_api.NitePoseData, "_posedata")
-class PoseData(object):
+class PoseData:
+    """Pose data with state tracking."""
     __slots__ = ["_posedata"]
 
     def __init__(self, posedata):
@@ -151,7 +162,8 @@ class PoseData(object):
 
 
 @inherit_properties(c_api.NiteSkeleton, "_skeleton")
-class Skeleton(object):
+class Skeleton:
+    """Skeleton joint data."""
     __slots__ = ["_skeleton"]
 
     def __init__(self, skeleton):
@@ -162,7 +174,8 @@ class Skeleton(object):
 
 
 @inherit_properties(c_api.NiteUserData, "_userdata")
-class UserData(object):
+class UserData:
+    """User tracking data including skeleton and poses."""
     __slots__ = ["_userdata"]
 
     def __init__(self, userdata):
@@ -305,7 +318,8 @@ class UserTracker(HandleObject):
 
 
 @inherit_properties(c_api.NiteGestureData, "_gesture")
-class GestureData(object):
+class GestureData:
+    """Gesture recognition data."""
     def __init__(self, gesture):
         self._gesture = gesture
 
@@ -317,7 +331,8 @@ class GestureData(object):
 
 
 @inherit_properties(c_api.NiteHandData, "_handdata")
-class HandData(object):
+class HandData:
+    """Hand tracking data."""
     def __init__(self, handdata):
         self._handdata = handdata
 

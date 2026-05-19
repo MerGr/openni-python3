@@ -1,4 +1,5 @@
 # pylint: disable=W0212,W0603
+"""OpenNI2 Python bindings for depth sensor integration."""
 
 import sys
 import os
@@ -7,8 +8,14 @@ import weakref
 import atexit
 import platform
 from openni import _openni2 as c_api
-from openni.utils import (inherit_properties, HandleObject, _py_to_ctype_obj, ClosedHandle, InitializationError,
-                          OpenNIError)
+from openni.utils import (
+    inherit_properties,
+    HandleObject,
+    _py_to_ctype_obj,
+    ClosedHandle,
+    InitializationError,
+    OpenNIError,
+)
 
 
 arch = int(platform.architecture()[0].lower().replace("bit", ""))
@@ -89,7 +96,7 @@ def initialize(dll_directories=_default_dll_directories):
             exceptions.append((fullpath, "file does not exist"))
             continue
         try:
-            os.chdir(dlldir)
+            os.add_dll_directory(dlldir)
             c_api.load_dll(fullpath)
             c_api.oniInitialize(c_api.ONI_API_VERSION)
         except Exception as ex:
@@ -101,8 +108,12 @@ def initialize(dll_directories=_default_dll_directories):
 
     os.chdir(prev)
     if not found:
-        raise InitializationError("OpenNI2 could not be loaded:\n    %s" %
-                                  ("\n    ".join("%s: %s" % (dir, ex) for dir, ex in exceptions)),)
+        error_details = "\n    ".join(
+            f"{dir}: {ex}" for dir, ex in exceptions
+        )
+        raise InitializationError(
+            f"OpenNI2 could not be loaded:\n    {error_details}"
+        )
 
     _openni2_initialized = True
 
@@ -166,13 +177,15 @@ VideoMode = c_api.OniVideoMode
 DeviceInfo = c_api.OniDeviceInfo
 
 
-class SensorInfo(object):
+class SensorInfo:
+    """Sensor information including type and supported video modes."""
     def __init__(self, info):
         self.sensorType = info.sensorType
         self.videoModes = [info.pSupportedVideoModes[i] for i in range(info.numSupportedVideoModes)]
 
     @classmethod
     def from_stream_handle(cls, handle):
+        """Create SensorInfo from a stream handle."""
         pinfo = c_api.oniStreamGetSensorInfo(handle)
         if pinfo == 0:
             return None
@@ -180,13 +193,15 @@ class SensorInfo(object):
 
     @classmethod
     def from_device_handle(cls, handle, sensor_type):
+        """Create SensorInfo from a device handle."""
         pinfo = c_api.oniDeviceGetSensorInfo(handle, sensor_type)
         if not pinfo:
             return None
         return cls(pinfo[0])
 
 
-class PlaybackSupport(object):
+class PlaybackSupport:
+    """Playback support for recording files."""
     __slots__ = ["device"]
 
     def __init__(self, device):

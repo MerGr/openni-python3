@@ -1,3 +1,9 @@
+v.2.4.0
+-------
+- updated to Python 3.8+ (Graoui Abderrahmane)
+- remove python 2 hacks (Graoui Abderrahmane)
+
+
 v.2.3.0
 -------
 
